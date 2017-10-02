@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubernetes.io/created-by: |
+      {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicaSet","namespace":"default","name":"nginx-96832238","uid":"98bdb71f-9f69-11e7-9988-fa163e313949","apiVersion":"extensions","resourceVersion":"1404479"}}
+  creationTimestamp: 2017-09-22T07:42:34Z
+  generateName: nginx-96832238-
+  labels:
+    app: nginx
+    pod-template-hash: "96832238"
+  name: nginx-96832238-fdj7h
+  namespace: default
+  ownerReferences:
+  - apiVersion: extensions/v1beta1
+    controller: true
+    kind: ReplicaSet
+    name: nginx-96832238
+    uid: 98bdb71f-9f69-11e7-9988-fa163e313949
+  resourceVersion: "1455997"
+  selfLink: /api/v1/namespaces/default/pods/nginx-96832238-fdj7h
+  uid: 98c19218-9f69-11e7-9988-fa163e313949
+spec:
+  containers:
+  - image: nginx
+    imagePullPolicy: Always
+    name: nginx
+    ports:
+    - containerPort: 8080
+      protocol: TCP
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    volumeMounts:
+    - mountPath: /tmp/data/nginx
+      name: nginx-local
+    - mountPath: /etc/nginx/nginx.conf
+      name: nginx-conf
+      subPath: nginx.conf
+    - mountPath: /etc/nginx/conf.d/load-balancer.conf
+      name: nginx-conf
+      subPath: load-balancer.conf
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-s1rd0
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  nodeName: 192.168.103.136
+  restartPolicy: Always
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  volumes:
+  - name: nginx-local
+    persistentVolumeClaim:
+      claimName: nginx-local
+  - configMap:
+      defaultMode: 420
+      name: nginx-conf
+    name: nginx-conf
+  - name: default-token-s1rd0
+    secret:
+      defaultMode: 420
+      secretName: default-token-s1rd0
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: 2017-09-22T07:42:34Z
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: 2017-09-22T14:58:43Z
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: 2017-09-22T07:42:34Z
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://f1e0d7cfa8c75c6b4b0bd1728a111228a575c00a3bdcee118d454c84432b6a26
+    image: nginx
+    imageID: docker-pullable://docker.io/nginx@sha256:aa1c5b5f864508ef5ad472c45c8d3b6ba34e5c0fb34aaea24acf4b0cee33187e
+    lastState:
+      terminated:
+        containerID: docker://1d1926cf7aaa4e1f8486ddd65638510b09577d640b777162dca8dc9dc58e4e6f
+        exitCode: 0
+        finishedAt: 2017-09-22T14:58:05Z
+        reason: Completed
+        startedAt: 2017-09-22T07:42:40Z
+    name: nginx
+    ready: true
+    restartCount: 1
+    state:
+      running:
+        startedAt: 2017-09-22T14:58:43Z
+  hostIP: 192.168.103.136
+  phase: Running
+  podIP: 172.30.86.4
+  startTime: 2017-09-22T07:42:34Z

@@ -1,0 +1,63 @@
+apiVersion: v1
+data:
+  load-balancer.conf: |
+    ##############################
+    #
+    ##############################
+    upstream OMS {
+    #directive for balancer servers
+            zone OMS 64k;
+    #balancing method with min connection
+            least_conn;
+            #ip_hash;
+            #or set -> weight=3 after server directive
+            server 172.30.86.4:8080; # max_fails=2 fail_timeout=15s;
+            server 172.30.54.9:8080; # max_fails=2 fail_timeout=15s;#server ip or hostname
+            server 172.30.90.3:8080; # backup;#tell this server is backup
+            }
+    server {
+            listen 8080; #spesif listening address
+            #server_name oms.lv254.com; #resolving name
+            location /lv254/ {
+    #path to OMS app
+                proxy_pass http://OMS;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                }
+            location / {
+    #path to tomcat home page
+                proxy_pass http://OMS;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+                }
+            }
+  nginx.conf: |
+    ##############################
+    #
+    ##############################
+
+    error_log /var/log/nginx/error.log;
+
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+            proxy_send_timeout 120;
+            proxy_read_timeout 300;
+            proxy_buffering    off;
+            keepalive_timeout  5 5;
+            tcp_nodelay        on;
+            include /etc/nginx/conf.d/load-balancer.conf;
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: 2017-09-25T15:35:16Z
+  name: nginx-map
+  namespace: default
+  resourceVersion: "1975322"
+  selfLink: /api/v1/namespaces/default/configmaps/nginx-map
+  uid: 21477ca5-a207-11e7-9988-fa163e313949

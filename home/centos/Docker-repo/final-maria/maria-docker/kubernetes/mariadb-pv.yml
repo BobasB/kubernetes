@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: datadir-mariatest-0
+  labels:
+    app: mariatest-ss
+    podindex: "0"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  hostPath:
+    path: /data/pods/mariatest-0/datadir
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: datadir-mariatest-1
+  labels:
+    app: mariatest-ss
+    podindex: "1"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  hostPath:
+    path: /data/pods/mariatest-1/datadir
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: datadir-mariatest-2
+  labels:
+    app: mariatest-ss
+    podindex: "2"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  hostPath:
+    path: /data/pods/mariatest-2/datadir

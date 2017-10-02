@@ -1,0 +1,33 @@
+##############################
+#
+##############################
+upstream OMS {
+#directive for balancer servers
+        zone OMS 64k;
+#balancing method with min connection
+        least_conn;
+        #ip_hash;
+        #or set -> weight=3 after server directive
+        #server 172.30.54.10:8080;# max_fails=2 fail_timeout=15s;
+        #server 172.30.54.9:8080;# max_fails=2 fail_timeout=15s;#server ip or hostname
+        #server 10.0.0.28:8080 backup;#tell this server is backup
+        }
+server {
+        listen 8080; #spesif listening address
+        #server_name oms.lv254.com; #resolving name
+        location /lv254/ {
+#path to OMS app
+            proxy_pass http://OMS;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            }
+        location / {
+#path to tomcat home page
+            proxy_pass http://OMS;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+            }
+        }

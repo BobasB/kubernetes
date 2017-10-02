@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: haproxy
+  labels:
+    app: haproxy
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: haproxy
+    spec:
+      containers:
+      - name: haproxy
+        image: dexnov17/haproxy
+        env:
+        - name: MARIA_SS_0_ADDR 
+          value: 172.30.54.12
+        - name: MARIA_SS_1_ADDR
+          value: 172.30.86.3
+        - name: MARIA_SS_2_ADDR
+          value: 172.30.90.5
+        - name: UI_USER
+          value: dexnov17
+        - name: UI_PASS
+          value: devops254
+        ports:
+        - name: mysqlport
+          containerPort: 3306
+        - name: webuiport
+          containerPort: 8080
+

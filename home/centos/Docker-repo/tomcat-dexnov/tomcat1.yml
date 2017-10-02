@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tomcat1-rs
+  labels:
+    app: tomcat-rs
+spec:
+  type: NodePort
+  ports:
+    - nodePort: 30000
+      port: 3306
+  selector:
+    app: tomcat1
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tomcat1
+  labels:
+    app: tomcat1
+spec:
+  replicas: 3
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: tomcat1
+    spec:
+      containers:
+      - name: tomcat1
+        image: dexnov17/tomcat1
+        env:
+        # kubectl create secret generic mysql-pass --from-file=password.txt
+#        - name: MYSQL_ROOT_PASSWORD
+#          value: myrootpassword
+#        - name: DISCOVERY_SERVICE
+#          value: etcd-client:2379
+#        - name: XTRABACKUP_PASSWORD
+#          value: password
+#        - name: CLUSTER_NAME
+#          value: mariadb_galera
+#        - name: MYSQL_DATABASE
+#          value: mydatabase
+#        - name: MYSQL_USER
+#          value: myuser
+#        - name: MYSQL_PASSWORD
+#          value: myuserpassword
+        ports:
+        - name: tomcat1port
+          containerPort: 8080
