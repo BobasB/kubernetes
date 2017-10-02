@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gitlab
+  labels:
+    app: gitlab
+spec:
+  #replicas: 3
+  #selector:
+    #app: tomcat
+  template:
+    metadata:
+      name: gitlab
+      labels:
+        app: gitlab
+    spec:
+      containers:
+      - name: tomcat
+        image: docker.io/gitlab/gitlab-ce
+        ports:
+        - name: gitlab
+          containerPort: 8080
+          hostPort: 3268

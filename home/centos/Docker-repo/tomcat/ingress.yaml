@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: echomap
+spec:
+  rules:
+  - host: foo.bar.com
+    http:
+      paths:
+      - path: /foo
+        backend:
+          serviceName: tomcat-x
+          servicePort: 30123
+  - host: bar.baz.com
+    http:
+      paths:
+      - path: /bar
+        backend:
+          serviceName: tomcat-y
+          servicePort: 30123
+      - path: /foo
+        backend:
+          serviceName: tomcat-x
+          servicePort: 30123

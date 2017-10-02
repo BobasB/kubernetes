@@ -1,0 +1,80 @@
+---
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx 
+  labels:
+    app: nginx
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30808
+  selector:
+    app: nginx
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nginx-local
+  labels:
+    type: local
+    app: nginx
+spec:
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/tmp/data/nginx"  
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nginx-local
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - name: nginx-local
+            mountPath: "/tmp/data/nginx"
+          - name: nginx-conf
+            mountPath: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+          - name: nginx-conf
+            mountPath: /etc/nginx/conf.d/load-balancer.conf
+            subPath: load-balancer.conf
+      volumes:
+        - name: nginx-local
+          persistentVolumeClaim:
+            claimName: nginx-local
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+---

@@ -1,0 +1,13 @@
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  name: "jenkins-slave"
+  labels:
+    name: "jenkins-slave"
+spec:
+    containers:
+      - name: "jenkins-slave"
+        image: "jenkinsci/jnlp-slave"
+        env:
+          - name: "JENKINS_URL"
+            value: "http://10.254.187.181:8080"

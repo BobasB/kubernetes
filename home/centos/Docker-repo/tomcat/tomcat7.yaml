@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tomcat
+  labels:
+    app: tomcat
+spec:
+  type: NodePort
+  ports: 
+    - port: 30123
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector: 
+    app: tomcat
+
+---
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: tomcat
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: tomcat
+    spec:
+      containers:
+      - name: tomcat
+        image: tomcat
+        ports:
+        - containerPort: 8080
+          hostPort: 30123
+          name: tomcat
+        volumeMounts:
+        - name: tomcat
+          mountPath: /home/tomcat/data:rw
+      volumes:
+        - name: tomcat
+          persistentVolumeClaim:
+            claimName: tomcat-claim
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tomcat-claim
+  labels:
+    app: tomcat
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

@@ -1,0 +1,23 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: tomcat1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: tomcat2
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

@@ -1,0 +1,66 @@
+apiVersion: v1
+data:
+  load-balancer.conf: |
+    ##############################
+    #
+    ##############################
+    upstream OMS {
+    #directive for balancer servers
+            zone OMS 64k;
+            least_conn;
+            server		172.30.90.3;
+
+
+#balancing method with min connection
+            #ip_hash;
+            #or set -> weight=3 after server directive
+            server 172.30.90.3;# max_fails=2 fail_timeout=15s;
+            server 172.30.90.4;# max_fails=2 fail_timeout=15s;#server ip or hostname
+            #server 10.0.0.28:8080 backup;#tell this server is backup
+            }
+    server {
+            listen 80; #spesif listening address
+            #server_name oms.lv254.com; #resolving name
+            location /lv254/ {
+    #path to OMS app
+                proxy_pass http://OMS;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                }
+            location / {
+    #path to tomcat home page
+                proxy_pass http://OMS;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+                }
+            }
+  nginx.conf: |
+    ##############################
+    #
+    ##############################
+
+    error_log /var/log/nginx/error.log;
+
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+            proxy_send_timeout 120;
+            proxy_read_timeout 300;
+            proxy_buffering    off;
+            keepalive_timeout  5 5;
+            tcp_nodelay        on;
+            include /etc/nginx/conf.d/load-balancer.conf;
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: 2017-09-20T10:47:38Z
+  name: nginx-conf
+  namespace: default
+  resourceVersion: "1116636"
+  selfLink: /api/v1/namespaces/default/configmaps/nginx-conf
+  uid: 1e857314-9df1-11e7-9988-fa163e313949
